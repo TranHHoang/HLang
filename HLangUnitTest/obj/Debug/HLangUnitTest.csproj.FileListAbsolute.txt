@@ -1,0 +1,17 @@
+C:\Users\Tran Huu Hoang\source\repos\HLang\HLangUnitTest\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
+C:\Users\Tran Huu Hoang\source\repos\HLang\HLangUnitTest\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll
+C:\Users\Tran Huu Hoang\source\repos\HLang\HLangUnitTest\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
+C:\Users\Tran Huu Hoang\source\repos\HLang\HLangUnitTest\bin\Debug\HLangUnitTest.dll
+C:\Users\Tran Huu Hoang\source\repos\HLang\HLangUnitTest\bin\Debug\HLangUnitTest.pdb
+C:\Users\Tran Huu Hoang\source\repos\HLang\HLangUnitTest\bin\Debug\HLang.exe
+C:\Users\Tran Huu Hoang\source\repos\HLang\HLangUnitTest\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.dll
+C:\Users\Tran Huu Hoang\source\repos\HLang\HLangUnitTest\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll
+C:\Users\Tran Huu Hoang\source\repos\HLang\HLangUnitTest\bin\Debug\HLang.pdb
+C:\Users\Tran Huu Hoang\source\repos\HLang\HLangUnitTest\bin\Debug\HLang.exe.config
+C:\Users\Tran Huu Hoang\source\repos\HLang\HLangUnitTest\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.xml
+C:\Users\Tran Huu Hoang\source\repos\HLang\HLangUnitTest\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.xml
+C:\Users\Tran Huu Hoang\source\repos\HLang\HLangUnitTest\obj\Debug\HLangUnitTest.csprojAssemblyReference.cache
+C:\Users\Tran Huu Hoang\source\repos\HLang\HLangUnitTest\obj\Debug\HLangUnitTest.csproj.CoreCompileInputs.cache
+C:\Users\Tran Huu Hoang\source\repos\HLang\HLangUnitTest\obj\Debug\HLangUnitTest.csproj.CopyComplete
+C:\Users\Tran Huu Hoang\source\repos\HLang\HLangUnitTest\obj\Debug\HLangUnitTest.dll
+C:\Users\Tran Huu Hoang\source\repos\HLang\HLangUnitTest\obj\Debug\HLangUnitTest.pdb
