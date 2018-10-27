@@ -47,6 +47,12 @@
     <Compile Include="Error\LexerError.cs" />
     <Compile Include="Helper\CharHelper.cs" />
     <Compile Include="Lexer\Lexer.cs" />
+    <Compile Include="Parser\Ast\AstNode.cs" />
+    <Compile Include="Parser\Ast\BinaryOperatorNode.cs" />
+    <Compile Include="Parser\Ast\IdentifierNode.cs" />
+    <Compile Include="Parser\Ast\LiteralNode.cs" />
+    <Compile Include="Visitor\AstVisitor\AstVisitor.cs" />
+    <Compile Include="Parser\Expr\Base\IInfix.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Token\Token.cs" />
