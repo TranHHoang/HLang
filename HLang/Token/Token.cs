@@ -12,6 +12,8 @@
             Equal, NotEqual, Less, LessOrEqual, Greater, GreaterOrEqual,
             Assign,
 
+            Quest, Colon,
+
             Indent, Dedent,
         }
 

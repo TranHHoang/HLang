@@ -2,9 +2,9 @@
 
 namespace HLang.Error
 {
-    public class LexerError : Exception
+    class ParseError : Exception
     {
-        public LexerError(string message, int line, int col)
+        public ParseError(string message, int line, int col)
         {
             Message = $"[ParseError] At ({line}, {col}): {message}";
         }

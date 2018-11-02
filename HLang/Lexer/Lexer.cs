@@ -40,10 +40,11 @@ namespace HLang.Lexer
                 { ">=", Token.Token.TokenType.GreaterOrEqual },
                 { "==", Token.Token.TokenType.Equal },
                 { "!=", Token.Token.TokenType.NotEqual },
+                { "?", Token.Token.TokenType.Quest },
+                { ":", Token.Token.TokenType.Colon },
             };
 
         private const int BasePrefixLength = 2; // 0x 0b 0o
-        private const int EOF = -1;
 
         /// <summary>
         /// Initialize lexer's components
@@ -168,7 +169,7 @@ namespace HLang.Lexer
                     {
                         return new Token.Token(Token.Token.TokenType.IntLiteral, value, Line, Column - value.Length);
                     }
-                    throw new LexerError($"Invalid integer number '{value}'", Line, Column);
+                    throw new SyntaxError($"Invalid integer number '{value}'", Line, Column);
                 }
             }
         }
@@ -198,7 +199,7 @@ namespace HLang.Lexer
             {
                 return new Token.Token(Token.Token.TokenType.DoubleLiteral, parsedValue + tempVal, Line, Column - parsedValue.Length - tempVal.Length);
             }
-            throw new LexerError($"Invalid double literal '{parsedValue + tempVal}'", Line, Column);
+            throw new SyntaxError($"Invalid double literal '{parsedValue + tempVal}'", Line, Column);
         }
 
         private Token.Token ParseInt(int numberBase)
@@ -262,7 +263,7 @@ namespace HLang.Lexer
                 if (Peek() == '\t' && _indentStyle == IndentMarker.Space
                     || Peek() == ' ' && _indentStyle == IndentMarker.Tab)
                 {
-                    throw new LexerError($"Inconsistent indentation marker: Expected '{_indentStyle}' but {1 - _indentStyle} found.",
+                    throw new SyntaxError($"Inconsistent indentation marker: Expected '{_indentStyle}' but {1 - _indentStyle} found.",
                         Line, Column);
                 }
 
@@ -344,9 +345,9 @@ namespace HLang.Lexer
                 // Insert dedent
                 while (totalIndent-- > 0) TokStream.Stream.Add(new Token.Token(Token.Token.TokenType.Dedent));
                 // We already go through the source file
-                TokStream.Stream.Add(new Token.Token(Token.Token.TokenType.EndOfStream));
+                TokStream.Stream.Add(new Token.Token(Token.Token.TokenType.EndOfStream, "", Line, Column));
             }
-            catch (LexerError e)
+            catch (SyntaxError e)
             {
                 Console.Error.WriteLine(e.Message);
 #if DEBUG

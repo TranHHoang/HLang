@@ -27,7 +27,7 @@ namespace HLangUnitTest
         }
 
         [TestMethod]
-        [ExpectedException(typeof(LexerError))]
+        [ExpectedException(typeof(SyntaxError))]
         public void SimpleIntExpr()
         {
             string src = "1_+2*3";

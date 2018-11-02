@@ -1,10 +1,10 @@
-﻿using HLang.Visitor.AstVisitor;
+﻿using HLang.Visitor;
 
 namespace HLang.Parser.Ast
 {
     public abstract class AstNode
     {
-        public AstNode(NodeType type, Token.Token token)
+        protected AstNode(NodeType type, Token.Token token)
         {
             Type = type;
             Token = token;
@@ -21,9 +21,11 @@ namespace HLang.Parser.Ast
         public enum NodeType
         {
             Literal, Identifier,
-            TernaryOperater, BinaryOperator, UnaryOperator
+            TernaryOperator, BinaryOperator, UnaryOperator,
+            Comparison,
+            Assignment
         }
 
-        public abstract void Accept(AstVisitor astVisitor);
+        public abstract object Accept(AstVisitor visitor);
     }
 }

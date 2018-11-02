@@ -15,6 +15,7 @@ namespace HLang.Token
             currentId = -1;
         }
 
+        public Token Current() => Stream[Math.Min(currentId, Stream.Count)];
         public Token Peek(int distance = 1) => Stream[Math.Min(currentId + distance, Stream.Count)];
         public Token Next() => Stream[Math.Min(++currentId, Stream.Count)];
         public void Unget() => --currentId;

@@ -1,6 +1,10 @@
-﻿namespace HLang.Parser.Expr.Base
+﻿using HLang.Parser.Ast;
+
+namespace HLang.Parser.Expr.Base
 {
-    interface IInfix
+    public interface IInfix
     {
+        AstNode Parse(Parser parser, AstNode leftExpr, Token.Token token);
+        int GetPrecedence();
     }
 }

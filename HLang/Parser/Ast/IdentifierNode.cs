@@ -1,4 +1,4 @@
-﻿using HLang.Visitor.AstVisitor;
+﻿using HLang.Visitor;
 
 namespace HLang.Parser.Ast
 {
@@ -6,8 +6,9 @@ namespace HLang.Parser.Ast
     {
         public IdentifierNode(Token.Token token) : base(NodeType.Identifier, token) { }
 
-        public override void Accept(AstVisitor astVisitor)
+        public override object Accept(AstVisitor visitor)
         {
+            return visitor.Visit(this);
         }
     }
 }

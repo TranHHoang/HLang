@@ -5,3 +5,10 @@ C:\Users\Tran Huu Hoang\source\repos\HLang\HLang\obj\Debug\HLang.csprojAssemblyR
 C:\Users\Tran Huu Hoang\source\repos\HLang\HLang\obj\Debug\HLang.csproj.CoreCompileInputs.cache
 C:\Users\Tran Huu Hoang\source\repos\HLang\HLang\obj\Debug\HLang.exe
 C:\Users\Tran Huu Hoang\source\repos\HLang\HLang\obj\Debug\HLang.pdb
+C:\Users\Tran Huu Hoang\code\HLang\HLang\bin\Debug\HLang.exe.config
+C:\Users\Tran Huu Hoang\code\HLang\HLang\bin\Debug\HLang.exe
+C:\Users\Tran Huu Hoang\code\HLang\HLang\bin\Debug\HLang.pdb
+C:\Users\Tran Huu Hoang\code\HLang\HLang\obj\Debug\HLang.csprojAssemblyReference.cache
+C:\Users\Tran Huu Hoang\code\HLang\HLang\obj\Debug\HLang.csproj.CoreCompileInputs.cache
+C:\Users\Tran Huu Hoang\code\HLang\HLang\obj\Debug\HLang.exe
+C:\Users\Tran Huu Hoang\code\HLang\HLang\obj\Debug\HLang.pdb

@@ -2,13 +2,12 @@
 
 namespace HLang.Parser.Ast
 {
-    public class BinaryOperatorNode : AstNode
+    public class AssignmentNode : AstNode
     {
-        public BinaryOperatorNode(Token.Token token, AstNode left, AstNode right) 
-            : base(NodeType.BinaryOperator, token)
+        public AssignmentNode(Token.Token token, AstNode lhs, AstNode rhs) : base(NodeType.Assignment, token)
         {
-            Left = left;
-            Right = right;
+            Left = lhs;
+            Right = rhs;
         }
 
         public override object Accept(AstVisitor visitor)

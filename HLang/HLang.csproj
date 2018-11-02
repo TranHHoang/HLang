@@ -44,14 +44,30 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Error\LexerError.cs" />
+    <Compile Include="Error\SyntaxError.cs" />
+    <Compile Include="Error\ParseError.cs" />
     <Compile Include="Helper\CharHelper.cs" />
     <Compile Include="Lexer\Lexer.cs" />
+    <Compile Include="Parser\Ast\AssignmentNode.cs" />
     <Compile Include="Parser\Ast\AstNode.cs" />
     <Compile Include="Parser\Ast\BinaryOperatorNode.cs" />
+    <Compile Include="Parser\Ast\ComparisonNode.cs" />
     <Compile Include="Parser\Ast\IdentifierNode.cs" />
     <Compile Include="Parser\Ast\LiteralNode.cs" />
-    <Compile Include="Visitor\AstVisitor\AstVisitor.cs" />
+    <Compile Include="Parser\Ast\PrefixOperatorNode.cs" />
+    <Compile Include="Parser\Ast\TernaryNode.cs" />
+    <Compile Include="Parser\Expr\Base\IPrefix.cs" />
+    <Compile Include="Parser\Expr\Base\Precedence.cs" />
+    <Compile Include="Parser\Expr\Derived\AssignmentParse.cs" />
+    <Compile Include="Parser\Expr\Derived\BinaryOperatorParse.cs" />
+    <Compile Include="Parser\Expr\Derived\ComparisonParse.cs" />
+    <Compile Include="Parser\Expr\Derived\IdentifierParse.cs" />
+    <Compile Include="Parser\Expr\Derived\LiteralParse.cs" />
+    <Compile Include="Parser\Expr\Derived\PrefixParse.cs" />
+    <Compile Include="Parser\Expr\Derived\TernaryParse.cs" />
+    <Compile Include="Parser\Parser.cs" />
+    <Compile Include="Visitor\AstInterpreter.cs" />
+    <Compile Include="Visitor\AstVisitor.cs" />
     <Compile Include="Parser\Expr\Base\IInfix.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -61,5 +77,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
