@@ -19,7 +19,7 @@ namespace HLang.Parser.Expr.Derived
             _rightAssociative = isRa;
         }
 
-        public AstNode Parse(Parser parser, AstNode leftExpr, Token.Token token)
+        public AstNode Parse(ExprParser parser, AstNode leftExpr, Token.Token token)
         {
             return new BinaryOperatorNode(token, leftExpr, parser.Parse((int)_precedence - (_rightAssociative ? 1 : 0)));
         }

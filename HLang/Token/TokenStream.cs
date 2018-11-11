@@ -5,14 +5,13 @@ namespace HLang.Token
 {
     public sealed class TokenStream
     {
-        private int currentId;
+        private int currentId = -1;
 
         public List<Token> Stream { get; set; }
 
         public TokenStream()
         {
             Stream = new List<Token>();
-            currentId = -1;
         }
 
         public Token Current() => Stream[Math.Min(currentId, Stream.Count)];

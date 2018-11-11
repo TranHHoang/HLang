@@ -4,6 +4,6 @@ namespace HLang.Parser.Expr.Base
 {
     public interface IPrefix
     {
-        AstNode Parse(Parser parser, Token.Token token);
+        AstNode Parse(ExprParser parser, Token.Token token);
     }
 }

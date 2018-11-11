@@ -4,7 +4,7 @@ namespace HLang.Parser.Expr.Derived
 {
     public class LiteralParse : Base.IPrefix
     {
-        public AstNode Parse(Parser parser, Token.Token token)
+        public AstNode Parse(ExprParser parser, Token.Token token)
         {
             return new LiteralNode(token);
         }

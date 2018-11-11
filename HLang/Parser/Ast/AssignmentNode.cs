@@ -1,6 +1,4 @@
-﻿using HLang.Visitor;
-
-namespace HLang.Parser.Ast
+﻿namespace HLang.Parser.Ast
 {
     public class AssignmentNode : AstNode
     {
@@ -8,11 +6,6 @@ namespace HLang.Parser.Ast
         {
             Left = lhs;
             Right = rhs;
-        }
-
-        public override object Accept(AstVisitor visitor)
-        {
-            return visitor.Visit(this);
         }
 
         public AstNode Left { get; }

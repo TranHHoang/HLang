@@ -17,7 +17,7 @@
             Indent, Dedent,
         }
 
-        public Token(TokenType type, string value = "", int line = 0, int column = 0)
+        public Token(TokenType type, string value, int line, int column)
         {
             Type = type;
             Value = value;
@@ -31,9 +31,9 @@
         public int Column { get; set; }
 
 #if DEBUG
-        public override string ToString() => string.Format("{0} {1} {2} {3}", Type, Value, Line, Column);
+        public override string ToString() => $"{Type} {Value} {Line} {Column}";
 #else
-        public override string ToString() => string.Format("Token(Type={0}, Val={1}, Pos=({2}, {3}))", Type, Value, Line, Column);
+        public override string ToString() => $"Token(Type={Type}, Val={Value}, Pos=({Line}, {Column}))";
 #endif
 
     }

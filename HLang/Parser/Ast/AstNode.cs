@@ -1,6 +1,4 @@
-﻿using HLang.Visitor;
-
-namespace HLang.Parser.Ast
+﻿namespace HLang.Parser.Ast
 {
     public abstract class AstNode
     {
@@ -25,7 +23,5 @@ namespace HLang.Parser.Ast
             Comparison,
             Assignment
         }
-
-        public abstract object Accept(AstVisitor visitor);
     }
 }

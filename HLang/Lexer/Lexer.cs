@@ -7,6 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 
+using TokenType = HLang.Token.Token.TokenType;
+
 namespace HLang.Lexer
 {
     public sealed class Lexer : IDisposable
@@ -15,36 +17,40 @@ namespace HLang.Lexer
         {
             Space, Tab, None
         }
-        private IndentMarker _indentStyle;
-        private readonly StreamReader _fileReader;
-        private Queue<char> _ungetStream; // Put back character to stream
-        private static readonly Dictionary<string, Token.Token.TokenType>
-            KeywordMap = new Dictionary<string, Token.Token.TokenType>()
+
+        private IndentMarker _indentStyle = IndentMarker.None;
+        private Queue<char> _ungetStream = new Queue<char>(); // Put back character to stream
+
+        private static readonly Dictionary<string, TokenType>
+            KeywordMap = new Dictionary<string, TokenType>()
             {
-                { "mod", Token.Token.TokenType.Mod },
-                { "div", Token.Token.TokenType.Div },
+                { "mod", TokenType.Mod },
+                { "div", TokenType.Div },
             };
-        private static readonly Dictionary<string, Token.Token.TokenType>
-            OperatorMap = new Dictionary<string, Token.Token.TokenType>()
+
+        private static readonly Dictionary<string, TokenType>
+            OperatorMap = new Dictionary<string, TokenType>()
             {
-                { "+", Token.Token.TokenType.Plus },
-                { "-", Token.Token.TokenType.Minus },
-                { "*", Token.Token.TokenType.Star },
-                { "**", Token.Token.TokenType.DoubleStar },
-                { "/", Token.Token.TokenType.Slash },
-                { "%", Token.Token.TokenType.Percent },
-                { "=", Token.Token.TokenType.Assign },
-                { "<", Token.Token.TokenType.Less },
-                { "<=", Token.Token.TokenType.LessOrEqual },
-                { ">", Token.Token.TokenType.Greater },
-                { ">=", Token.Token.TokenType.GreaterOrEqual },
-                { "==", Token.Token.TokenType.Equal },
-                { "!=", Token.Token.TokenType.NotEqual },
-                { "?", Token.Token.TokenType.Quest },
-                { ":", Token.Token.TokenType.Colon },
+                { "+", TokenType.Plus },
+                { "-", TokenType.Minus },
+                { "*", TokenType.Star },
+                { "**", TokenType.DoubleStar },
+                { "/", TokenType.Slash },
+                { "%", TokenType.Percent },
+                { "=", TokenType.Assign },
+                { "<", TokenType.Less },
+                { "<=", TokenType.LessOrEqual },
+                { ">", TokenType.Greater },
+                { ">=", TokenType.GreaterOrEqual },
+                { "==", TokenType.Equal },
+                { "!=", TokenType.NotEqual },
+                { "?", TokenType.Quest },
+                { ":", TokenType.Colon },
             };
 
         private const int BasePrefixLength = 2; // 0x 0b 0o
+
+        private readonly StreamReader _fileReader;
 
         /// <summary>
         /// Initialize lexer's components
@@ -52,7 +58,6 @@ namespace HLang.Lexer
         private void Init()
         {
             TokStream = new TokenStream();
-            _ungetStream = new Queue<char>();
             Line = 0;
             Column = 0;
         }
@@ -88,9 +93,8 @@ namespace HLang.Lexer
 
         private char Next()
         {
-            var c = _ungetStream.Any() ? _ungetStream.Dequeue() : (char)_fileReader.Read();
             ++Column;
-            return c;
+            return _ungetStream.Any() ? _ungetStream.Dequeue() : (char)_fileReader.Read();
         }
 
         private bool IsEOF() => _fileReader.EndOfStream && !_ungetStream.Any();
@@ -108,20 +112,13 @@ namespace HLang.Lexer
             string value = "";
             while (!IsEOF())
             {
-                char currentChar = Peek();
-                if (currentChar.IsIdentifier())
-                {
-                    value += Next();
-                }
-                else
-                {
-                    break;
-                }
+                if (!Peek().IsIdentifier()) break;
+                value += Next();
             }
 
             return KeywordMap.ContainsKey(value) ?
                 new Token.Token(KeywordMap[value], value, Line, Column) :
-                new Token.Token(Token.Token.TokenType.Identifier, value, Line, Column);
+                new Token.Token(TokenType.Identifier, value, Line, Column);
         }
 
         private Token.Token ParseNumber()
@@ -167,7 +164,7 @@ namespace HLang.Lexer
                     // Validate string
                     if (!value.EndsWith("_") && BigInteger.TryParse(value.Replace("_", ""), out _))
                     {
-                        return new Token.Token(Token.Token.TokenType.IntLiteral, value, Line, Column - value.Length);
+                        return new Token.Token(TokenType.IntLiteral, value, Line, Column - value.Length);
                     }
                     throw new SyntaxError($"Invalid integer number '{value}'", Line, Column);
                 }
@@ -197,7 +194,7 @@ namespace HLang.Lexer
             // Check if valid
             if (!(parsedValue + tempVal).EndsWith("_") && double.TryParse((parsedValue + tempVal).Replace("_", ""), out _))
             {
-                return new Token.Token(Token.Token.TokenType.DoubleLiteral, parsedValue + tempVal, Line, Column - parsedValue.Length - tempVal.Length);
+                return new Token.Token(TokenType.DoubleLiteral, parsedValue + tempVal, Line, Column - parsedValue.Length - tempVal.Length);
             }
             throw new SyntaxError($"Invalid double literal '{parsedValue + tempVal}'", Line, Column);
         }
@@ -220,9 +217,9 @@ namespace HLang.Lexer
                 break;
             }
 
-            return new Token.Token(numberBase == 2 ? Token.Token.TokenType.BinLiteral :
-                                    numberBase == 8 ? Token.Token.TokenType.OctLiteral :
-                                    Token.Token.TokenType.HexLiteral, value, Line, Column - value.Length - BasePrefixLength);
+            return new Token.Token(numberBase == 2 ? TokenType.BinLiteral :
+                                    numberBase == 8 ? TokenType.OctLiteral :
+                                    TokenType.HexLiteral, value, Line, Column - value.Length - BasePrefixLength);
         }
 
         private Token.Token ParseString()
@@ -231,16 +228,12 @@ namespace HLang.Lexer
 
             while (!IsEOF())
             {
-                if (Peek() == '"' || Peek() == '\n')
-                {
-                    break;
-                }
-
+                if (Peek() == '"' || Peek() == '\n') break;
                 value += Next();
             }
             Next(); // Skip close quote '"'
 
-            return new Token.Token(Token.Token.TokenType.StringLiteral, value, Line, Column - value.Length);
+            return new Token.Token(TokenType.StringLiteral, value, Line, Column - value.Length);
         }
 
         /// <summary>
@@ -252,7 +245,9 @@ namespace HLang.Lexer
         void HandleIndent(int prevDepth, int currentDepth, ref int totalIndent)
         {
             totalIndent += currentDepth > prevDepth ? 1 : -1;
-            TokStream.Stream.Add(new Token.Token(currentDepth > prevDepth ? Token.Token.TokenType.Indent : Token.Token.TokenType.Dedent));
+            TokStream.Stream.Add(new Token.Token(currentDepth > prevDepth 
+                ? TokenType.Indent 
+                : TokenType.Dedent, "", Line, Column));
         }
 
         int GetIndentDepth()
@@ -265,6 +260,10 @@ namespace HLang.Lexer
                 {
                     throw new SyntaxError($"Inconsistent indentation marker: Expected '{_indentStyle}' but {1 - _indentStyle} found.",
                         Line, Column);
+                }
+                else if (_indentStyle == IndentMarker.None)
+                {
+                    _indentStyle = Peek() == '\t' ? IndentMarker.Tab : IndentMarker.Space;
                 }
 
                 Next();
@@ -331,7 +330,10 @@ namespace HLang.Lexer
                                         actualOperator += Next();
                                     }
 
-                                    TokStream.Stream.Add(new Token.Token(OperatorMap[actualOperator], actualOperator, Line, Column - actualOperator.Length));
+                                    TokStream.Stream.Add(new Token.Token(
+                                        OperatorMap[actualOperator], actualOperator, 
+                                        Line, Column - actualOperator.Length
+                                    ));
                                 }
                                 else
                                 {
@@ -343,9 +345,10 @@ namespace HLang.Lexer
                     }
                 }
                 // Insert dedent
-                while (totalIndent-- > 0) TokStream.Stream.Add(new Token.Token(Token.Token.TokenType.Dedent));
+                while (totalIndent-- > 0)
+                    TokStream.Stream.Add(new Token.Token(TokenType.Dedent, "", Line, Column));
                 // We already go through the source file
-                TokStream.Stream.Add(new Token.Token(Token.Token.TokenType.EndOfStream, "", Line, Column));
+                TokStream.Stream.Add(new Token.Token(TokenType.EndOfStream, "", Line, Column));
             }
             catch (SyntaxError e)
             {

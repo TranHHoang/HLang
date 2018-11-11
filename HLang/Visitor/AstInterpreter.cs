@@ -1,36 +1,38 @@
 ﻿using HLang.Parser.Ast;
 using System;
 using System.Collections.Generic;
+
 using Math = System.Math;
+using TokenType = HLang.Token.Token.TokenType;
 
 namespace HLang.Visitor
 {
-    public class AstInterpreter : AstVisitor
+    public sealed class AstInterpreter
     {
         private readonly Dictionary<string, object> _symbolTable = new Dictionary<string, object>();
 
-        public override object Visit(LiteralNode node)
+        public object Visit(LiteralNode node)
         {
             switch (node.Token.Type)
             {
-                case Token.Token.TokenType.IntLiteral:
+                case TokenType.IntLiteral:
                     return Convert.ToInt64(node.Token.Value);
-                case Token.Token.TokenType.BinLiteral:
+                case TokenType.BinLiteral:
                     return Convert.ToInt64(node.Token.Value, 2);
-                case Token.Token.TokenType.OctLiteral:
+                case TokenType.OctLiteral:
                     return Convert.ToInt64(node.Token.Value, 8);
-                case Token.Token.TokenType.HexLiteral:
+                case TokenType.HexLiteral:
                     return Convert.ToInt64(node.Token.Value, 16);
-                case Token.Token.TokenType.DoubleLiteral:
+                case TokenType.DoubleLiteral:
                     return Convert.ToDouble(node.Token.Value);
-                case Token.Token.TokenType.BoolLiteral:
+                case TokenType.BoolLiteral:
                     return Convert.ToBoolean(node.Token.Value);
                 default:
                     return null;
             }
         }
 
-        public override object Visit(IdentifierNode node)
+        public object Visit(IdentifierNode node)
         {
             if (_symbolTable.ContainsKey(node.Token.Value))
             {
@@ -40,65 +42,66 @@ namespace HLang.Visitor
             return node.Token.Value;
         }
 
-        public override object Visit(BinaryOperatorNode node)
+        public object Visit(BinaryOperatorNode node)
         {
             // Eval left
-            var lhs = node.Left.Accept(this);
+            var lhs = Visit((dynamic)node.Left);
             // Eval right
-            var rhs = node.Right.Accept(this);
+            var rhs = Visit((dynamic)node.Right);
 
             switch (node.Token.Type)
             {
-                case Token.Token.TokenType.Plus:
+                case TokenType.Plus:
                     if (lhs is double || rhs is double)
                     {
                         return Convert.ToDouble(lhs) + Convert.ToDouble(rhs);
                     }
                     return (long)lhs + (long)rhs;
 
-                case Token.Token.TokenType.Minus:
+                case TokenType.Minus:
                     if (lhs is double || rhs is double)
                     {
                         return Convert.ToDouble(lhs) - Convert.ToDouble(rhs);
                     }
                     return (long)lhs - (long)rhs;
 
-                case Token.Token.TokenType.Star:
+                case TokenType.Star:
                     if (lhs is double || rhs is double)
                     {
                         return Convert.ToDouble(lhs) * Convert.ToDouble(rhs);
                     }
                     return (long)lhs * (long)rhs;
 
-                case Token.Token.TokenType.Slash:
+                case TokenType.Slash:
                     if (lhs is double || rhs is double)
                     {
                         return Convert.ToDouble(lhs) / Convert.ToDouble(rhs);
                     }
                     return Convert.ToDouble(lhs) / (long)rhs;
 
-                case Token.Token.TokenType.Div:
+                case TokenType.Div:
                     if (lhs is double || rhs is double)
                     {
                         return (long)(Convert.ToDouble(lhs) / Convert.ToDouble(rhs));
                     }
                     return (long)lhs / (long)rhs;
 
-                case Token.Token.TokenType.Percent:
+                case TokenType.Percent:
                     if (lhs is double || rhs is double)
                     {
                         return Convert.ToDouble(lhs) % Convert.ToDouble(rhs);
                     }
                     return (long)lhs % (long)rhs;
 
-                case Token.Token.TokenType.Mod:
+                case TokenType.Mod:
                     if (lhs is double || rhs is double)
                     {
-                        return (Convert.ToDouble(lhs) % Convert.ToDouble(rhs) + Convert.ToDouble(rhs) % Convert.ToDouble(rhs));
+                        return (Convert.ToDouble(lhs) % Convert.ToDouble(rhs) 
+                            + Convert.ToDouble(rhs) % Convert.ToDouble(rhs));
                     }
                     return ((long)lhs % (long)rhs + (long)rhs) % (long)rhs;
 
-                case Token.Token.TokenType.DoubleStar:
+                case TokenType.DoubleStar:
                     if (lhs is double || rhs is double)
                     {
                         return Math.Pow(Convert.ToDouble(lhs), Convert.ToDouble(rhs));
@@ -109,11 +112,11 @@ namespace HLang.Visitor
             return null;
         }
 
-        public override object Visit(PrefixOperatorNode node)
+        public object Visit(PrefixOperatorNode node)
         {
-            var expr = node.Expr.Accept(this);
+            var expr = Visit((dynamic)node.Expr);
 
-            if (node.Token.Type != Token.Token.TokenType.Minus)
+            if (node.Token.Type != TokenType.Minus)
             {
                 return expr;
             }
@@ -129,51 +132,51 @@ namespace HLang.Visitor
             return null;
         }
 
-        public override object Visit(ComparisonNode node)
+        public object Visit(ComparisonNode node)
         {
             // Eval left
-            var lhs = node.Left.Accept(this);
+            var lhs = Visit((dynamic)node.Left);
             // Eval right
-            var rhs = node.Right.Accept(this);
+            var rhs = Visit((dynamic)node.Right);
 
             switch (node.Token.Type)
             {
-                case Token.Token.TokenType.Equal:
+                case TokenType.Equal:
                     if (lhs is double || rhs is double)
                     {
                         return Convert.ToDouble(lhs) == Convert.ToDouble(rhs);
                     }
                     return (long)lhs == (long)rhs;
 
-                case Token.Token.TokenType.NotEqual:
+                case TokenType.NotEqual:
                     if (lhs is double || rhs is double)
                     {
                         return Convert.ToDouble(lhs) != Convert.ToDouble(rhs);
                     }
                     return (long)lhs != (long)rhs;
 
-                case Token.Token.TokenType.Less:
+                case TokenType.Less:
                     if (lhs is double || rhs is double)
                     {
                         return Convert.ToDouble(lhs) < Convert.ToDouble(rhs);
                     }
                     return (long)lhs < (long)rhs;
 
-                case Token.Token.TokenType.LessOrEqual:
+                case TokenType.LessOrEqual:
                     if (lhs is double || rhs is double)
                     {
                         return Convert.ToDouble(lhs) <= Convert.ToDouble(rhs);
                     }
                     return Convert.ToDouble(lhs) <= (long)rhs;
 
-                case Token.Token.TokenType.Greater:
+                case TokenType.Greater:
                     if (lhs is double || rhs is double)
                     {
                         return Convert.ToDouble(lhs) > Convert.ToDouble(rhs);
                     }
                     return (long)lhs > (long)rhs;
 
-                case Token.Token.TokenType.GreaterOrEqual:
+                case TokenType.GreaterOrEqual:
                     if (lhs is double || rhs is double)
                     {
                         return Convert.ToDouble(lhs) >= Convert.ToDouble(rhs);
@@ -184,39 +187,25 @@ namespace HLang.Visitor
             return null;
         }
 
-        public override object Visit(TernaryNode node)
+        public object Visit(TernaryNode node)
         {
-            return Convert.ToBoolean(node.TestExpr.Accept(this)) ? node.TrueExpr.Accept(this) : node.FalseExpr.Accept(this);
+            return Convert.ToBoolean(Visit((dynamic)node.TestExpr)) 
+                ? Visit((dynamic)node.TrueExpr) 
+                : Visit((dynamic)node.FalseExpr);
         }
 
-        public override object Visit(AssignmentNode node)
+        public object Visit(AssignmentNode node)
         {
-            var exprLeft = node.Left.Accept(this);
-            var value = node.Right.Accept(this);
+            var exprLeft = Visit((dynamic)node.Left);
+            var value = Visit((dynamic)node.Right);
 
-            _symbolTable[exprLeft is null ? node.Left.Token.Value : exprLeft.ToString()] = value;
+            _symbolTable[exprLeft?.ToString() ?? node.Left.Token.Value] = value;
             return value;
         }
 
         public object Eval(AstNode root)
         {
-            switch (root)
-            {
-                case LiteralNode l:
-                    return Visit(l);
-                case BinaryOperatorNode b:
-                    return Visit(b);
-                case PrefixOperatorNode p:
-                    return Visit(p);
-                case ComparisonNode c:
-                    return Visit(c);
-                case TernaryNode t:
-                    return Visit(t);
-                case AssignmentNode a:
-                    return Visit(a);
-                default:
-                    return null;
-            }
+            return Visit((dynamic)root);
         }
     }
 }

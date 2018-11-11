@@ -65,7 +65,7 @@
     <Compile Include="Parser\Expr\Derived\LiteralParse.cs" />
     <Compile Include="Parser\Expr\Derived\PrefixParse.cs" />
     <Compile Include="Parser\Expr\Derived\TernaryParse.cs" />
-    <Compile Include="Parser\Parser.cs" />
+    <Compile Include="Parser\ExprParser.cs" />
     <Compile Include="Visitor\AstInterpreter.cs" />
     <Compile Include="Visitor\AstVisitor.cs" />
     <Compile Include="Parser\Expr\Base\IInfix.cs" />

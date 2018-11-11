@@ -1,6 +1,4 @@
-﻿using HLang.Visitor;
-
-namespace HLang.Parser.Ast
+﻿namespace HLang.Parser.Ast
 {
     public class TernaryNode : AstNode
     {
@@ -9,11 +7,6 @@ namespace HLang.Parser.Ast
             TestExpr = testExpr;
             TrueExpr = trueExpr;
             FalseExpr = falseExpr;
-        }
-
-        public override object Accept(AstVisitor visitor)
-        {
-            return visitor.Visit(this);
         }
 
         public AstNode TestExpr { get; }

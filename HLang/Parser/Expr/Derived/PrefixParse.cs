@@ -5,7 +5,7 @@ namespace HLang.Parser.Expr.Derived
 {
     class PrefixParse : IPrefix
     {
-        public AstNode Parse(Parser parser, Token.Token token)
+        public AstNode Parse(ExprParser parser, Token.Token token)
         {
             return new PrefixOperatorNode(token, parser.Parse((int)Precedence.Prefix));
         }
