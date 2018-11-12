@@ -19,13 +19,13 @@ namespace HLang.Lexer
         }
 
         private IndentMarker _indentStyle = IndentMarker.None;
-        private Queue<char> _ungetStream = new Queue<char>(); // Put back character to stream
+        private readonly Queue<char> _ungetStream = new Queue<char>(); // Put back character to stream
 
         private static readonly Dictionary<string, TokenType>
             KeywordMap = new Dictionary<string, TokenType>()
             {
-                { "mod", TokenType.Mod },
                 { "div", TokenType.Div },
+                { "mod", TokenType.Mod },
             };
 
         private static readonly Dictionary<string, TokenType>
@@ -46,6 +46,20 @@ namespace HLang.Lexer
                 { "!=", TokenType.NotEqual },
                 { "?", TokenType.Quest },
                 { ":", TokenType.Colon },
+                { "&&", TokenType.And },
+                { "||", TokenType.Or },
+                { "!", TokenType.Not },
+
+                { "(", TokenType.LeftParen },
+                { ")", TokenType.RightParen },
+
+                { "&", TokenType.BitwiseAnd },
+                { "|", TokenType.BitwiseOr },
+                { "^", TokenType.BitwiseXor },
+                { "~", TokenType.BitwiseNot },
+
+                { "<<", TokenType.LeftShift },
+                { ">>", TokenType.RightShift },
             };
 
         private const int BasePrefixLength = 2; // 0x 0b 0o
@@ -87,7 +101,7 @@ namespace HLang.Lexer
             _fileReader.Close();
         }
 
-        public TokenStream TokStream { get; set; }
+        public TokenStream TokStream { get; private set; }
         public int Line { get; set; }
         public int Column { get; set; }
 
@@ -97,7 +111,7 @@ namespace HLang.Lexer
             return _ungetStream.Any() ? _ungetStream.Dequeue() : (char)_fileReader.Read();
         }
 
-        private bool IsEOF() => _fileReader.EndOfStream && !_ungetStream.Any();
+        private bool IsEof() => _fileReader.EndOfStream && !_ungetStream.Any();
 
         private void Unget(char c)
         {
@@ -110,7 +124,7 @@ namespace HLang.Lexer
         private Token.Token ParseIdentifier()
         {
             string value = "";
-            while (!IsEOF())
+            while (!IsEof())
             {
                 if (!Peek().IsIdentifier()) break;
                 value += Next();
@@ -144,7 +158,7 @@ namespace HLang.Lexer
                 default:
                 {
                     value += currentChar;
-                    while (!IsEOF())
+                    while (!IsEof())
                     {
                         currentChar = Peek();
                         if (currentChar.IsNumberLiteral())
@@ -176,7 +190,7 @@ namespace HLang.Lexer
             var tempVal = Next().ToString();
             var hasPlusOrMinus = false;
 
-            while (!IsEOF())
+            while (!IsEof())
             {
                 if (Peek().IsUniqueRealLiteral()
                     || Peek().IsNumberLiteral()
@@ -203,7 +217,7 @@ namespace HLang.Lexer
         {
             var value = "";
 
-            while (!IsEOF())
+            while (!IsEof())
             {
                 switch (numberBase)
                 {
@@ -226,7 +240,7 @@ namespace HLang.Lexer
         {
             var value = "";
 
-            while (!IsEOF())
+            while (!IsEof())
             {
                 if (Peek() == '"' || Peek() == '\n') break;
                 value += Next();
@@ -253,7 +267,7 @@ namespace HLang.Lexer
         int GetIndentDepth()
         {
             var depth = 0;
-            while (!IsEOF() && (Peek() == '\t' || Peek() == ' '))
+            while (!IsEof() && (Peek() == '\t' || Peek() == ' '))
             {
                 if (Peek() == '\t' && _indentStyle == IndentMarker.Space
                     || Peek() == ' ' && _indentStyle == IndentMarker.Tab)
@@ -280,7 +294,7 @@ namespace HLang.Lexer
                 var prevDepth = 0;
                 var totalIndent = 0;
 
-                while (!IsEOF())
+                while (!IsEof())
                 {
                     var currentChar = Peek();
                     if (char.IsLetter(currentChar) || currentChar == '_')
@@ -320,7 +334,7 @@ namespace HLang.Lexer
                                 }
                                 var actualOperator = Next().ToString();
 
-                                if (OperatorMap.ContainsKey(currentChar.ToString()))
+                                if (OperatorMap.ContainsKey(currentChar.ToString()) || OperatorMap.ContainsKey(currentChar.ToString() + Peek()))
                                 {
                                     // We do not need to check if EOF because if it happens, 
                                     // Peek() return -1
