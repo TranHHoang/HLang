@@ -1,25 +1,26 @@
 ﻿using HLang.Parser.Ast;
 using HLang.Parser.Expr.Base;
+using System;
 
 namespace HLang.Parser.Expr.Derived
 {
-    class ComparisonParse : IInfix
+    class BitwiseOperatorParse : IInfix
     {
         private readonly Precedence _precedence;
 
-        public ComparisonParse(Precedence precedence)
+        public BitwiseOperatorParse(Precedence precedence)
         {
             _precedence = precedence;
         }
 
         public AstNode Parse(ExprParser parser, AstNode leftExpr, Token.Token token)
         {
-            return new ComparisonNode(token, leftExpr, parser.Parse(GetPrecedence()));
+            return new BitwiseOperatorNode(token, leftExpr, parser.Parse(GetPrecedence()));
         }
 
         public int GetPrecedence()
         {
-            return (int) _precedence;
+            return (int)_precedence;
         }
     }
 }

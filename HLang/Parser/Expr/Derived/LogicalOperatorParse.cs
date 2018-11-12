@@ -3,25 +3,22 @@ using HLang.Parser.Expr.Base;
 
 namespace HLang.Parser.Expr.Derived
 {
-    class BinaryOperatorParse : IInfix
+    public class LogicalOperatorParse : IInfix
     {
         private readonly Precedence _precedence;
-        private readonly bool _rightAssociative;
 
         /// <summary>
         /// Construct new BinaryOperatorNode
         /// </summary>
         /// <param name="prec">Precedence of operator</param>
-        /// <param name="isRa">Is right associative</param>
-        public BinaryOperatorParse(Precedence prec, bool isRa)
+        public LogicalOperatorParse(Precedence prec)
         {
             _precedence = prec;
-            _rightAssociative = isRa;
         }
 
         public AstNode Parse(ExprParser parser, AstNode leftExpr, Token.Token token)
         {
-            return new BinaryOperatorNode(token, leftExpr, parser.Parse(GetPrecedence() - (_rightAssociative ? 1 : 0)));
+            return new LogicalOperatorNode(token, leftExpr, parser.Parse(GetPrecedence()));
         }
 
         public int GetPrecedence()

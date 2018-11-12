@@ -16,7 +16,7 @@ namespace HLang.Parser.Expr.Derived
 
         public int GetPrecedence()
         {
-            return (int)Precedence.Ternary;
+            return (int)Precedence.Conditional;
         }
     }
 }
