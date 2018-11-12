@@ -5,14 +5,25 @@
         public enum TokenType
         {
             EndOfStream,
+
             IntLiteral, DoubleLiteral, StringLiteral, CharLiteral, BoolLiteral,
             HexLiteral, OctLiteral, BinLiteral,
+
             Identifier,
+
             Plus, Minus, Star, Slash, Div, Percent, Mod, DoubleStar,
+
             Equal, NotEqual, Less, LessOrEqual, Greater, GreaterOrEqual,
+
+            And, Or, Not,
+
+            LeftParen, RightParen,
+
             Assign,
 
             Quest, Colon,
+
+            LeftShift, RightShift, BitwiseAnd, BitwiseOr, BitwiseXor, BitwiseNot,
 
             Indent, Dedent,
         }
