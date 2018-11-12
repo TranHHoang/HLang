@@ -19,9 +19,10 @@
         public enum NodeType
         {
             Literal, Identifier,
-            TernaryOperator, BinaryOperator, UnaryOperator,
+            TernaryOperator, BinaryOperator, UnaryOperator, BitwiseOperator,
             Comparison,
-            Assignment
+            LogicalOperator,
+            Assignment,
         }
     }
 }
