@@ -3,7 +3,7 @@
 namespace HLang.Error
 {
     [Serializable]
-    class ParseError : Exception
+    public class ParseError : Exception
     {
         public ParseError() { }
 
