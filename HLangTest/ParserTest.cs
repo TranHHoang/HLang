@@ -6,7 +6,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace HLangUnitTest
+namespace HLangTest
 {
     [TestClass]
     public class ParseTest
@@ -14,13 +14,13 @@ namespace HLangUnitTest
         [TestMethod]
         public void SimpleExpr()
         {
-            var src = "a=b=c=1";
+            var src = "1^2";
             var lexer = new Lexer(new MemoryStream(Encoding.UTF8.GetBytes(src)));
             lexer.Start();
             var parser = new ExprParser(lexer.TokStream);
             var ast = parser.Parse(0);
             var interpreter = new AstInterpreter();
-            long a = Convert.ToInt64(interpreter.Eval(ast));
+            Console.Write(Convert.ToInt64(interpreter.Eval(ast)));
         }
     }
 }

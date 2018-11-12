@@ -5,56 +5,75 @@ using HLang.Parser.Expr.Derived;
 using HLang.Token;
 using System.Collections.Generic;
 
+using TokenType = HLang.Token.Token.TokenType;
+
 namespace HLang.Parser
 {
     public sealed class ExprParser
     {
         private readonly TokenStream _tokenStream;
-        private readonly Dictionary<Token.Token.TokenType, IInfix> _infixMap;
-        private readonly Dictionary<Token.Token.TokenType, IPrefix> _prefixMap;
+        private readonly Dictionary<TokenType, IInfix> _infixMap;
+        private readonly Dictionary<TokenType, IPrefix> _prefixMap;
 
         public ExprParser(TokenStream tokenStream)
         {
             _tokenStream = tokenStream;
-            _infixMap = new Dictionary<Token.Token.TokenType, IInfix>();
-            _prefixMap = new Dictionary<Token.Token.TokenType, IPrefix>();
+            _infixMap = new Dictionary<TokenType, IInfix>();
+            _prefixMap = new Dictionary<TokenType, IPrefix>();
             RegisterParser();
         }
 
         private void RegisterParser()
         {
-            Register(Token.Token.TokenType.IntLiteral, new LiteralParse());
-            Register(Token.Token.TokenType.DoubleLiteral, new LiteralParse());
+            Register(TokenType.IntLiteral, new LiteralParse());
+            Register(TokenType.DoubleLiteral, new LiteralParse());
             // Identifier
-            Register(Token.Token.TokenType.Identifier, new IdentifierParse());
+            Register(TokenType.Identifier, new IdentifierParse());
             // Prefix
-            RegisterPrefix(Token.Token.TokenType.Plus); // Ex: +2, +3
-            RegisterPrefix(Token.Token.TokenType.Minus); // Ex: -2, -3
+            RegisterPrefix(TokenType.Plus, Precedence.Unary); // Ex: +2, +3
+            RegisterPrefix(TokenType.Minus, Precedence.Unary); // Ex: -2, -3
 
             // Binary operator
-            RegisterBinaryOperator(Token.Token.TokenType.Plus, Precedence.Sum);
-            RegisterBinaryOperator(Token.Token.TokenType.Minus, Precedence.Sum);
+            RegisterBinaryOperator(TokenType.Plus, Precedence.Additive);
+            RegisterBinaryOperator(TokenType.Minus, Precedence.Additive);
 
-            RegisterBinaryOperator(Token.Token.TokenType.Star, Precedence.Product);
-            RegisterBinaryOperator(Token.Token.TokenType.Slash, Precedence.Product);
-            RegisterBinaryOperator(Token.Token.TokenType.Div, Precedence.Product);
-            RegisterBinaryOperator(Token.Token.TokenType.Percent, Precedence.Product);
-            RegisterBinaryOperator(Token.Token.TokenType.Mod, Precedence.Product);
+            RegisterBinaryOperator(TokenType.Star, Precedence.Multiplicative);
+            RegisterBinaryOperator(TokenType.Slash, Precedence.Multiplicative);
+            RegisterBinaryOperator(TokenType.Div, Precedence.Multiplicative);
+            RegisterBinaryOperator(TokenType.Percent, Precedence.Multiplicative);
+            RegisterBinaryOperator(TokenType.Mod, Precedence.Multiplicative);
 
-            RegisterBinaryOperatorR(Token.Token.TokenType.DoubleStar, Precedence.Exponent);
+            RegisterBinaryOperatorR(TokenType.DoubleStar, Precedence.Exponent);
 
-            Register(Token.Token.TokenType.Quest, new TernaryParse());
+            Register(TokenType.Quest, new TernaryParse());
+            
+            // Bitwise
+            RegisterBitwiseOperator(TokenType.BitwiseAnd, Precedence.BitwiseAnd);
+            RegisterBitwiseOperator(TokenType.BitwiseOr, Precedence.BitwiseOr);
+            RegisterBitwiseOperator(TokenType.BitwiseXor, Precedence.BitwiseXor);
+            RegisterPrefix(TokenType.BitwiseNot, Precedence.BitwiseNot);
+            RegisterBitwiseOperator(TokenType.LeftShift, Precedence.BitwiseShift);
+            RegisterBitwiseOperator(TokenType.RightShift, Precedence.BitwiseShift);
 
             // Comparison
-            RegisterComparison(Token.Token.TokenType.Equal);
-            RegisterComparison(Token.Token.TokenType.NotEqual);
-            RegisterComparison(Token.Token.TokenType.Less);
-            RegisterComparison(Token.Token.TokenType.LessOrEqual);
-            RegisterComparison(Token.Token.TokenType.Greater);
-            RegisterComparison(Token.Token.TokenType.GreaterOrEqual);
+            RegisterComparison(TokenType.Equal, Precedence.Equality);
+            RegisterComparison(TokenType.NotEqual, Precedence.Equality);
+
+            RegisterComparison(TokenType.Less, Precedence.Relational);
+            RegisterComparison(TokenType.LessOrEqual, Precedence.Relational);
+            RegisterComparison(TokenType.Greater, Precedence.Relational);
+            RegisterComparison(TokenType.GreaterOrEqual, Precedence.Relational);
+
+            // Logical
+            Register(TokenType.And, new LogicalOperatorParse(Precedence.LogicalAnd));
+            Register(TokenType.Or, new LogicalOperatorParse(Precedence.LogicalOr));
+            RegisterPrefix(TokenType.Not, Precedence.LogicalNot); // Ex: !(a == b)
+
+            // Group
+            Register(TokenType.LeftParen, new ParenParse()); // Ex: -2, -3
 
             // Assignment
-            Register(Token.Token.TokenType.Assign, new AssignmentParse());
+            Register(TokenType.Assign, new AssignmentParse());
         }
 
         /// <summary>
@@ -87,37 +106,42 @@ namespace HLang.Parser
             return _infixMap.TryGetValue(_tokenStream.Peek().Type, out var res) ? res.GetPrecedence() : 0;
         }
 
-        private void Register(Token.Token.TokenType type, IInfix infix)
+        private void Register(TokenType type, IInfix infix)
         {
             _infixMap[type] = infix;
         }
 
-        private void Register(Token.Token.TokenType type, IPrefix prefix)
+        private void Register(TokenType type, IPrefix prefix)
         {
             _prefixMap[type] = prefix;
         }
 
-        private void RegisterPrefix(Token.Token.TokenType type)
+        private void RegisterPrefix(TokenType type, Precedence prec)
         {
-            Register(type, new PrefixParse());
+            Register(type, new PrefixParse(prec));
         }
 
-        private void RegisterBinaryOperator(Token.Token.TokenType type, Precedence precedence)
+        private void RegisterBinaryOperator(TokenType type, Precedence precedence)
         {
             Register(type, new BinaryOperatorParse(precedence, false));
         }
 
-        private void RegisterComparison(Token.Token.TokenType type)
+        private void RegisterBitwiseOperator(TokenType type, Precedence precedence)
         {
-            Register(type, new ComparisonParse());
+            Register(type, new BitwiseOperatorParse(precedence));
         }
 
-        private void RegisterBinaryOperatorR(Token.Token.TokenType type, Precedence precedence)
+        private void RegisterComparison(TokenType type, Precedence precedence)
+        {
+            Register(type, new ComparisonParse(precedence));
+        }
+
+        private void RegisterBinaryOperatorR(TokenType type, Precedence precedence)
         {
             Register(type, new BinaryOperatorParse(precedence, true));
         }
 
-        public void Consume(Token.Token.TokenType type)
+        public void Consume(TokenType type)
         {
             var nextToken = _tokenStream.Next();
             if (nextToken.Type != type)
