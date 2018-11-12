@@ -1,5 +1,6 @@
 ﻿using HLang.Parser.Ast;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 
 using Math = System.Math;
@@ -52,11 +53,12 @@ namespace HLang.Visitor
             switch (node.Token.Type)
             {
                 case TokenType.Plus:
-                    if (lhs is double || rhs is double)
-                    {
-                        return Convert.ToDouble(lhs) + Convert.ToDouble(rhs);
-                    }
-                    return (long)lhs + (long)rhs;
+                    return lhs + rhs;
+                    //if (lhs is double || rhs is double)
+                    //{
+                    //    return Convert.ToDouble(lhs) + Convert.ToDouble(rhs);
+                    //}
+                    //return (long)lhs + (long)rhs;
 
                 case TokenType.Minus:
                     if (lhs is double || rhs is double)
@@ -112,24 +114,45 @@ namespace HLang.Visitor
             return null;
         }
 
+        public object Visit(BitwiseOperatorNode node)
+        {
+            // Eval left
+            var lhs = Visit((dynamic)node.Left);
+            // Eval right
+            var rhs = Visit((dynamic)node.Right);
+
+            switch (node.Token.Type)
+            {
+                case TokenType.BitwiseAnd:
+                    return lhs & rhs;
+                case TokenType.BitwiseOr:
+                    return lhs | rhs;
+                case TokenType.BitwiseXor:
+                    return lhs ^ rhs;
+                case TokenType.LeftShift:
+                    return lhs << rhs;
+                case TokenType.RightShift:
+                    return lhs >> rhs;
+            }
+
+            return null;
+        }
+
         public object Visit(PrefixOperatorNode node)
         {
             var expr = Visit((dynamic)node.Expr);
 
-            if (node.Token.Type != TokenType.Minus)
+            switch (node.Token.Type)
             {
-                return expr;
+                case TokenType.Not:
+                    return !expr;
+                case TokenType.Minus:
+                    return -expr;
+                case TokenType.BitwiseNot:
+                    return ~expr;
+                default:
+                    return expr;
             }
-
-            switch (expr)
-            {
-                case long i:
-                    return -i;
-                case double d:
-                    return -d;
-            }
-
-            return null;
         }
 
         public object Visit(ComparisonNode node)
@@ -201,6 +224,20 @@ namespace HLang.Visitor
 
             _symbolTable[exprLeft?.ToString() ?? node.Left.Token.Value] = value;
             return value;
+        }
+
+        public object Visit(LogicalOperatorNode node)
+        {
+            var lhs = Visit((dynamic)node.Left);
+            var rhs = Visit((dynamic)node.Right);
+
+            switch (node.Token.Type)
+            {
+                case TokenType.And:
+                    return lhs && rhs;
+                default:
+                    return lhs || rhs;
+            }
         }
 
         public object Eval(AstNode root)
